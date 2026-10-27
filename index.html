@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Which Read More? · a daily ten from yesterday's Wikipedia</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%235b3fa8'/%3E%3Cpath d='M7 9h18M7 15h18M7 21h11' stroke='%23fff' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E">
+<meta name="theme-color" content="#5b3fa8">
+<meta name="description" content="Two Wikipedia articles from yesterday's most read: tap the one more people read. Ten a day, from five times as many to neck and neck.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://matmat202.github.io/which-read-more/">
+<meta property="og:title" content="Which Read More?">
+<meta property="og:description" content="Yesterday on Wikipedia: which did more people read? Ten a day.">
+<meta name="twitter:card" content="summary">
+<style>
+:root{color-scheme:light;--ground:#f7f6fa;--card:#fff;--ink:#16202a;--ink-2:#4f5b66;--ink-3:#66727d;
+  --line:#dedbe8;--accent:#5b3fa8;
+  --a:#2a78d6;--b:#c2521f;--good:#137a4f;--bad:#b3261e;
+  --f-ui:system-ui,-apple-system,"Segoe UI",sans-serif}
+@media (prefers-color-scheme:dark){:root{color-scheme:dark;--ground:#141219;--card:#1d1a24;--ink:#e9eef2;
+  --ink-2:#b0bcc6;--ink-3:#93a0ab;--line:#353042;--accent:#b9a4f5;
+  --a:#5aa2f0;--b:#f08a55;--good:#4cc98d;--bad:#ff8a80}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--ground);color:var(--ink);font-family:var(--f-ui);font-size:15px}
+main{max-width:760px;margin:0 auto;padding:16px}
+h1{font-size:24px;margin:4px 0 2px}h1 span{color:var(--accent)}
+.sub{color:var(--ink-2);font-size:13px;margin:0 0 14px;line-height:1.45}
+a{color:var(--accent)}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.bar{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:0 0 10px;font-size:13px;color:var(--ink-2)}
+.marks{display:flex;gap:4px;list-style:none;margin:0;padding:0}
+.marks li{width:14px;height:14px;border-radius:4px;border:1px solid var(--line);background:var(--card)}
+.marks li.y{background:var(--good);border-color:var(--good)}
+.marks li.n{background:var(--bad);border-color:var(--bad)}
+.marks li.now{border:2px solid var(--accent)}
+h2.q{font-size:18px;margin:6px 0 10px;text-align:center}
+.pick{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.pick button{font:inherit;text-align:center;padding:18px 10px;border:2px solid var(--line);border-radius:14px;background:var(--card);
+  color:var(--ink);cursor:pointer;min-height:96px;display:flex;flex-direction:column;justify-content:center;gap:4px}
+.pick button:hover:not(:disabled){border-color:var(--accent)}
+.pick button b{font-size:20px;line-height:1.2}
+.pick button .desc{font-size:13px;color:var(--ink-2);line-height:1.3}
+.pick button .lat{font-size:16px;font-weight:600;font-variant-numeric:tabular-nums;min-height:1.2em}
+.pick button.a .lat{color:var(--a)}.pick button.b .lat{color:var(--b)}
+.pick button:disabled{cursor:default}
+.pick button.right{border-color:var(--good)}
+.pick button.wrong{border-color:var(--bad)}
+.pick .key{font-size:11px;color:var(--ink-3)}
+.out{margin:12px 0 0;text-align:center;min-height:1.4em;font-size:15px}
+.out b.y{color:var(--good)}.out b.n{color:var(--bad)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:8px;margin:12px 0 0}
+.what{color:var(--ink-2);font-size:13px;text-align:center;margin:-6px 0 10px}
+.bars{display:grid;gap:8px;padding:10px}
+.bars .row{display:grid;grid-template-columns:minmax(0,13em) 1fr;gap:8px;align-items:center;font-size:13px}
+.bars .row a{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bars .track{height:14px;background:var(--ground);border-radius:7px;overflow:hidden}
+.bars .fill{height:100%;border-radius:7px}
+.bars .a .fill{background:var(--a)}.bars .b .fill{background:var(--b)}
+.bars .note{font-size:12px;color:var(--ink-2)}
+.go{display:flex;justify-content:center;gap:8px;margin:12px 0 0;flex-wrap:wrap}
+.go button{font:inherit;font-weight:600;padding:10px 18px;border:0;border-radius:10px;background:var(--accent);color:var(--card);cursor:pointer}
+.go button.ghost{background:var(--card);color:var(--accent);border:1px solid var(--line)}
+.end{text-align:center}
+.end .score{font-size:40px;font-weight:700;margin:4px 0 0}
+.end p{margin:4px 0;color:var(--ink-2)}
+ol.recap{list-style:none;margin:14px 0 0;padding:0;display:grid;gap:6px}
+ol.recap li{text-align:left;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:8px 10px;font-size:13px;display:flex;gap:8px;align-items:baseline}
+ol.recap li .m{font-weight:700;width:1.2em;flex:none}
+ol.recap li .m.y{color:var(--good)}ol.recap li .m.n{color:var(--bad)}
+ol.recap li .t{flex:1;min-width:0}
+ol.recap li .d{color:var(--ink-2);font-variant-numeric:tabular-nums;white-space:nowrap}
+footer{font-size:12px;color:var(--ink-2);line-height:1.5;margin:18px 2px 8px}
+[hidden]{display:none!important}
+@media (max-width:480px){.pick button b{font-size:17px}.pick .key{display:none}.bars .row{grid-template-columns:minmax(0,8em) 1fr}}
+</style>
+</head>
+<body>
+<main>
+<h1>Which <span>Read More?</span></h1>
+<p class="sub">Two articles from English Wikipedia's thousand most read on <span id="day">yesterday</span>. Tap the one more people read. Ten a day, from five times as many to neck and neck.</p>
+
+<section id="play" aria-live="polite">
+  <div class="bar"><span id="round">Loading yesterday's numbers…</span><ol class="marks" id="marks" aria-label="Your answers so far"></ol></div>
+  <h2 class="q">Which did more people read?</h2>
+  <div class="pick" id="pick">
+    <button type="button" class="a" data-i="0"><b></b><span class="desc"></span><span class="lat"></span><span class="key">← or 1</span></button>
+    <button type="button" class="b" data-i="1"><b></b><span class="desc"></span><span class="lat"></span><span class="key">→ or 2</span></button>
+  </div>
+  <p class="out" id="out"></p>
+  <div class="card bars" id="bars" hidden></div>
+  <div class="go"><button type="button" id="next" hidden>Next</button></div>
+</section>
+
+<section id="end" class="end" hidden>
+  <p id="endday"></p>
+  <div class="score" id="score"></div>
+  <p id="streak"></p>
+  <div class="go">
+    <button type="button" id="share">Copy result</button>
+    <button type="button" id="practice" class="ghost">Practice ten more</button>
+    <button type="button" id="daily" class="ghost" hidden>Back to today's</button>
+  </div>
+  <p id="past" hidden>An earlier day. <a href="./">Play the latest ten</a>.</p>
+  <p id="copied" aria-live="polite"></p>
+  <ol class="recap" id="recap"></ol>
+</section>
+
+<footer>
+  Numbers: <a href="https://wikitech.wikimedia.org/wiki/Data_Platform/Data_Lake/Traffic/Pageviews">Wikimedia pageviews</a>,
+  fetched live from Wikimedia's own API: the top 1,000 English Wikipedia articles for one day in UTC, across desktop, mobile web and the app.
+  Each day is published some hours after it ends in UTC; until it is, you get the day before.
+  Left out: the Main Page and pages that are not articles; pages whose traffic is nearly all desktop or nearly all phone, which
+  Wikimedia's own <a href="https://en.wikipedia.org/wiki/Wikipedia:Top_25_Report">Top 25 Report</a> treats as automated;
+  disambiguation pages and pages without a short description; and anything whose title or description is about sex, porn,
+  killing, suicide, terror attacks or disasters, because this is a game. Add <code>?day=2026-10-26</code> to the address to play any day since 1 July 2015. Everyone gets the same ten. Nothing leaves your browser
+  except the requests to Wikipedia.
+  <br>Made by Claude for <a href="https://matmat202.github.io/">matmat202</a> ·
+  <a href="https://github.com/matmat202/which-read-more">source</a>
+</footer>
+</main>
+<script type="module" src="app.js"></script>
+</body>
+</html>
