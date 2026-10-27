@@ -104,6 +104,39 @@ ok('but reach the tail', Math.max(...at) > 900 * 0.8, Math.max(...at));
 eq('fits refuses equal views', L.fits({ v: 5 }, { v: 5 }, [1, 9]), false);
 eq('a list too small for ten gives what it can', L.roundsFor([{ t: 'a', v: 9 }, { t: 'b', v: 1 }, { t: 'c', v: 3 }], 'x').length, 1);
 
+// --- exact edges and the widening path ------------------------------------------------------
+eq('rng(1), pinned', (() => { const r = L.rng(1); return [r(), r(), r()]; })(), [0.6270739405881613, 0.002735721180215478, 0.5274470399599522]);
+eq('fits: both band ends are inside', [L.fits({ v: 20 }, { v: 10 }, [2, 3]), L.fits({ v: 30 }, { v: 10 }, [2, 3]), L.fits({ v: 31 }, { v: 10 }, [2, 3]), L.fits({ v: 19 }, { v: 10 }, [2, 3])],
+  [true, true, false, false]);
+eq('a tie: the first named is "higher", so the verdict keeps the order given', [L.higherIndex(5, 5), L.verdict('A', 5, 'B', 5)], [0, 'A: 5 views. B: 5 views. 1% more.']);
+eq('times: 1.95 is the first "times as many", and one view is not zero', [L.times(19.5, 10), L.times(19.49, 10), L.times(5, 1)], ['2.0 times as many', '95% more', '5.0 times as many']);
+eq('utcDay at exactly midnight UTC', L.utcDay(Date.parse('2026-10-27T00:00:00Z')), '2026-10-26');
+eq('candidates: one view counts, zero does not', L.candidates(list([['One', 1], ['Zero', 0]]), null).map((c) => c.t), ['One']);
+eq('candidates: exactly 90% desktop and exactly 5% are kept', L.candidates(list([['Ninety', 10], ['Five', 20]]), list([['Ninety', 9], ['Five', 1]])).map((c) => c.desk), [0.05, 0.9]);
+eq('a title both normalised and redirected maps back to what was asked', Object.keys(L.readDescriptions({ query: {
+  normalized: [{ from: 'united_states', to: 'United states' }], redirects: [{ from: 'United states', to: 'United States' }],
+  pages: [{ title: 'United States', description: 'Country' }] } })), ['united_states']);
+eq('a redirect with no normalising maps back too', Object.keys(L.readDescriptions({ query: { redirects: [{ from: 'USA', to: 'United States' }],
+  pages: [{ title: 'United States', description: 'Country' }] } })), ['USA']);
+// One round only (round 2 has its own band). Two articles 1.07x apart need all six widenings of band 1 (5, 3, 2, 1.5, 1.25, 1.125): none
+// is wide enough, so no round. 1.13x is found on the sixth and last.
+eq('widening: six tries, from the band itself', [L.roundsFor([{ t: 'a', v: 107 }, { t: 'b', v: 100 }], 'x', new Set(), 1).length,
+  L.roundsFor([{ t: 'a', v: 113 }, { t: 'b', v: 100 }], 'x', new Set(), 1).length, L.roundsFor([{ t: 'a', v: 126 }, { t: 'b', v: 100 }], 'x', new Set(), 1).length], [0, 1, 1]);
+const narrow = Array.from({ length: 60 }, (_, i) => ({ t: `N${i}`, v: 1000 + i * 7 }));
+eq('widening: a list too even for its bands, pinned', L.roundsFor(narrow, 'w'), [[5, 42], [6, 53], [54, 0], [4, 41], [56, 1], [59, 7], [46, 16], [2, 49], [9, 29], [15, 35]]);
+// An exhausted try loop draws the same stream whatever the band, so a try more or less (or
+// a wider hi) only changes the deal when the fitting draw sits on the boundary. These seeds
+// were searched for: each one tells "3000 tries from 0, hi doubling" from its neighbours.
+eq('widening: the try count and hi growth, pinned on searched seeds', [L.roundsFor(narrow, 's0'), L.roundsFor(narrow, 's3'),
+  L.roundsFor(Array.from({ length: 12 }, (_, i) => ({ t: `S${i}`, v: 100 + i * i * 40 })), 's0')],
+  [[[0, 47], [50, 4], [1, 59], [3, 46], [57, 2], [5, 45], [7, 35], [15, 51], [33, 9], [21, 11]],
+   [[48, 5], [53, 6], [4, 36], [1, 40], [0, 54], [46, 3], [2, 57], [50, 14], [22, 55], [7, 24]],
+   [[10, 0], [7, 3], [1, 4], [5, 8], [9, 6], [2, 11]]]);
+// The bands are the design (README: five times first, a few percent last); "every pair is in
+// its band" reads them from the module, so a changed bound passes it.
+eq('the bands, as designed', L.BANDS, [[5, Infinity], [3.5, 9], [2.5, 6], [2, 4], [1.7, 3], [1.5, 2.4], [1.35, 1.9], [1.22, 1.6], [1.12, 1.4], [1.03, 1.2]]);
+eq('more rounds than bands: the rest use the last band', L.roundsFor(fake, 'n', new Set(), 12).length, 12);
+
 // --- one real day ---------------------------------------------------------------------------
 // data/ sits beside site/ here and beside this file in the published copy.
 const fix = existsSync(here('./data/2026-10-26/all.json')) ? here('./data/2026-10-26/') : here('../data/2026-10-26/'), factFile = existsSync(here('./facts.json')) ? here('./facts.json') : here('../test/facts.json');
@@ -134,6 +167,14 @@ if (existsSync(fix + 'all.json') && existsSync(factFile)) {
     bad.forEach((t) => ban.add(t));
   }
   ok('real: the ban loop settles, on ten showable pairs', tries < 8 && rounds.length === 10 && L.titlesOf(real, rounds).every((t) => L.allowed(t, D[t])), tries);
+  // The ten 2026-10-26 actually served, pinned by title and side. "The same day is the same
+  // ten" compares a day with itself, which every rng, hash and band constant satisfies; a
+  // stored pick is a side (0 or 1), so swapping a pair re-scores a finished day too.
+  eq('real: 2026-10-26 is the ten that were served, each side as shown', L.titlesOf(real, rounds), ['You_Can_See_Everything', 'James_Blunt',
+    'Backrooms_(film)', 'Clayface_(film)', 'Day_of_the_Dead', 'Brazil', 'Walter_Koenig', 'Alexia_Putellas', 'Justine_Lupe', 'Eric_Bruskotter',
+    'Geraldo_Alckmin', 'Natalia_Grace', 'Sylvester_Stallone', 'War_(TV_series)', 'Anthony_Bourdain', 'Iliana_Iotova',
+    '2026_FIFA_World_Cup', 'George_Washington', 'Pierce_Brosnan', 'Dakota_Johnson']);
+  eq('real: it took two bans, of the two undescribed picks', [tries, [...ban]], [2, ['2026_Israeli_legislative_election', 'List_of_presidents_of_the_United_States']]);
 } else ok('real: data/2026-10-26/ and test/facts.json exist (run capture.py, test/facts.py)', false);
 
 console.log(`${fail ? 'FAILED' : 'ok'}: ${pass} passed, ${fail} failed`);
