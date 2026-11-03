@@ -36,6 +36,8 @@ a{color:var(--accent)}
 .marks li{width:14px;height:14px;border-radius:4px;border:1px solid var(--line);background:var(--card)}
 .marks li.y{background:var(--good);border-color:var(--good)}
 .marks li.n{background:var(--bad);border-color:var(--bad)}
+.marks li.y,.marks li.n{display:grid;place-items:center;color:var(--card);font:700 10px/1 system-ui,sans-serif}
+.marks li.y::after{content:"\2713";content:"\2713" / ""}.marks li.n::after{content:"\2715";content:"\2715" / ""} /* a glyph, not hue alone: red/green merge for colour-blind players */
 .marks li.now{border:2px solid var(--accent)}
 h2.q{font-size:18px;margin:6px 0 10px;text-align:center}
 .pick{display:grid;grid-template-columns:1fr 1fr;gap:10px}
