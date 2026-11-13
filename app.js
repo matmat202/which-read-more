@@ -169,7 +169,10 @@ function drawEnd() {
     const mk = document.createElement('span'); mk.className = 'm ' + (m[k] ? 'y' : 'n'); mk.textContent = m[k] ? '✓' : '✗';
     mk.setAttribute('aria-label', m[k] ? 'right' : 'wrong');
     const [h, l] = L.higherIndex(a.v, b.v) === 0 ? [a, b] : [b, a];
-    const t = document.createElement('span'); t.className = 't'; t.textContent = `${h.name} over ${l.name}`;
+    // Each name links to its article: the recap is where all ten pairs stay, and the one
+    // place a player can go and find out why Kaviya Maran had 101,460 readers.
+    const link = (c) => { const n = document.createElement('a'); n.href = wiki(c.t); n.textContent = c.name; return n; };
+    const t = document.createElement('span'); t.className = 't'; t.append(link(h), ' over ', link(l));
     const d = document.createElement('span'); d.className = 'd'; d.textContent = `${h.v.toLocaleString('en-US')} vs ${l.v.toLocaleString('en-US')}`;
     li.append(mk, t, d);
     return li;
