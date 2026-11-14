@@ -162,6 +162,7 @@ function drawEnd() {
   $('streak').textContent = game.practice || PAST ? `${game.practice ? 'Practice rounds' : 'Earlier days'} do not count toward your streak.`
     : `${s === 1 ? 'First day of a streak' : `${s}-day streak`}. A new ten when the next day's numbers are out.`;
   $('share').hidden = game.practice;
+  $('share').textContent = sheet() ? 'Share result' : 'Copy result';
   $('copied').textContent = '';
   $('recap').replaceChildren(...game.rounds.map((_, k) => {
     const { a, b } = at(k);
@@ -179,8 +180,17 @@ function drawEnd() {
   }));
 }
 
+// On a phone the share sheet hands the result straight to Messages; copying made the player
+// switch apps and paste. Desktop browsers that have navigator.share open a clumsy system
+// dialog for it, so a mouse keeps the clipboard. Cancelling the sheet is not a failure.
+const sheet = () => typeof navigator.share === 'function' && matchMedia('(pointer: coarse)').matches;
 async function share() {
   const text = L.shareText(DAY, marks()) + '\nhttps://matmat202.github.io/which-read-more/';
+  $('copied').textContent = '';
+  if (sheet()) {
+    try { await navigator.share({ text }); return; }
+    catch (e) { if (e && e.name === 'AbortError') return; }
+  }
   try { await navigator.clipboard.writeText(text); $('copied').textContent = 'Copied.'; }
   catch { $('copied').textContent = text; }
 }
