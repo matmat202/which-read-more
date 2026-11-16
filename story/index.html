@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bet on this year’s film · Which Read More?, a story</title>
+<meta name="description" content="A story from Which Read More?: over a year of the game's pairs, almost nothing on the card tells you which Wikipedia article was read more. A person, American, alive: coin flips. One hint beats 1,000 random ones: an article dated 2025 or 2026 was the more read three times in five, and it is the new films that carry it.">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="plot" aria-hidden="true"></div>
+<p id="err" role="alert"></p>
+<main>
+
+<section class="step" data-step="cues"><div>
+  <p class="kicker">Which Read More? · a story</p>
+  <h1>Bet on this year’s film</h1>
+  <p>The game shows two Wikipedia articles from one day’s thousand most read, each with its
+  one-line description, and asks which more people read. Is there anything on that line
+  worth betting on?</p>
+  <p>I re-drew the game’s ten pairs for each of <b data-fact="n_days"></b> days, from
+  <b data-fact="first"></b> to <b data-fact="last"></b>: <b data-fact="n_pairs"></b> pairs,
+  <b data-fact="n_arts"></b> articles. For six things a description can say, each red dot is
+  how often the article that said it was the more read, when only one of the two did.</p>
+  <p>The grey dots are the test: the same label, stuck on as many random articles from the
+  same pairs, <b data-fact="n_sh"></b> times each. <span class="w">Five of the six sit inside
+  the grey.</span> A person: <b data-fact="rate:person"></b>. American:
+  <b data-fact="rate:american"></b>. Alive, of two people: <b data-fact="rate:alive"></b>.
+  Coin flips.</p>
+  <p class="small"><span class="k up">the real hint</span> <span class="k down">a random label</span> · Scroll ↓</p>
+</div></section>
+
+<section class="step" data-step="pairs"><div>
+  <p class="kicker">Chapter 1 · The one that works</p>
+  <h2>Three in five</h2>
+  <p>Descriptions of new things often lead with their year: “2025 American film by Zach
+  Cregger”. (“Mixed martial arts event in 2025” does not count; the year has to come
+  first.) In
+  <b data-fact="n:year"></b> pairs exactly one article was dated 2025 or 2026.</p>
+  <p>That one was the more read in <b data-fact="won:year"></b> of them,
+  <b data-fact="rate:year"></b>: <span class="w">about three in five</span>.
+  <b data-fact="lost:year"></b> times the other one won.</p>
+  <p>It holds in both halves of the year: <b data-fact="h:h1"></b> before
+  <b data-fact="half"></b>, <b data-fact="h:h2"></b> from then on.</p>
+</div></section>
+
+<section class="step" data-step="films"><div>
+  <p class="kicker">Chapter 2 · Where it lives</p>
+  <h2>It is the films</h2>
+  <p>Split the dated articles into films and the rest, and most of the lead is in one place. A film dated
+  2025 or 2026 was the more read <b data-fact="grate:newfilm"></b> of the time
+  (<b data-fact="won:newfilm"></b> of <b data-fact="n:newfilm"></b>). Anything else dated
+  2025 or 2026, from elections to video games, <b data-fact="grate:newother"></b>.</p>
+  <p>And an older film <span class="w">loses</span>: <b data-fact="glost:oldfilm"></b> of
+  its <b data-fact="n:oldfilm"></b> pairs went to the other article. A likely reason, which
+  these data do not test: a new film is on the list because it is in cinemas, an old one
+  because something brought it back for a day.</p>
+  <p class="small">This split is a look after the fact: unlike the six hints, it was not
+  tested against random labels of its own.</p>
+</div></section>
+
+<section class="step" data-step="shuffle"><div>
+  <p class="kicker">Chapter 3 · Could it be luck?</p>
+  <h2>A thin margin, but a clear one</h2>
+  <p>Here are the <b data-fact="n_sh"></b> random sets for that one hint alone: each time,
+  <b data-fact="size:year"></b> articles picked at random from the same pairs were called
+  “dated”, and I counted again.</p>
+  <p>The typical random set wins <b data-fact="med:year"></b>. The luckiest,
+  <b data-fact="max1:year"></b>. The real one, <b data-fact="rate1:year"></b>:
+  <span class="w">none of the <b data-fact="n_sh"></b> reach it</span>, but the best comes
+  within a point. Film on its own, any year, gets <b data-fact="rate:film"></b>, and
+  <b data-fact="high:film"></b> random sets do as well, so I would not lean on that.</p>
+</div></section>
+
+<section class="step" data-step="cues"><div>
+  <p class="kicker">Epilogue · What to tap</p>
+  <h2>New beats famous</h2>
+  <p>Fame doesn’t show on the card: being a person, being American, being alive tells you
+  nothing about yesterday. A seventh hint I tried, the younger of two living people, won
+  <b data-fact="grate:younger"></b> (<b data-fact="won:younger"></b> of
+  <b data-fact="n:younger"></b>), and is not drawn. What does show is that a thing is new.</p>
+  <p>So in <a href="../">Which Read More?</a>, when one of the two is a film from this year
+  or last, tap it. It will still be wrong two times in five.</p>
+  <p class="small">Data: the
+  <a href="https://wikitech.wikimedia.org/wiki/Data_Platform/Data_Lake/Traffic/Pageviews">Wikimedia Pageviews
+  API</a>’s daily top 1,000 English Wikipedia articles (all-access and desktop), the same
+  lists the game reads; <b data-fact="missing"></b> days in the span are missing from the API
+  and are skipped. The pairs are the game’s own <code>roundsFor</code> for each day, with its
+  filters and bans. Descriptions are Wikipedia’s
+  <a href="https://en.wikipedia.org/wiki/Wikipedia:Short_description">short descriptions</a>,
+  fetched in November 2026, not as they read on the day. Each hint is a pattern on that
+  line: “a person” is a birth year or a lifespan in brackets, “dated” is a description
+  that starts with 2025 or 2026. The program is
+  <a href="https://github.com/matmat202/which-read-more/blob/main/story/build_story.py">in the
+  repository</a>.</p>
+</div></section>
+
+</main>
+<script type="module" src="story.js"></script>
+</body>
+</html>
