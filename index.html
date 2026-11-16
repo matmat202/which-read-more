@@ -64,8 +64,8 @@ h2.q{font-size:18px;margin:6px 0 10px;text-align:center}
 .bars .a .fill{background:var(--a)}.bars .b .fill{background:var(--b)}
 .bars .note{font-size:12px;color:var(--ink-2)}
 .go{display:flex;justify-content:center;gap:8px;margin:12px 0 0;flex-wrap:wrap}
-.go button{font:inherit;font-weight:600;padding:10px 18px;border:0;border-radius:10px;background:var(--accent);color:var(--card);cursor:pointer}
-.go button.ghost{background:var(--card);color:var(--accent);border:1px solid var(--line)}
+.go button,.go a{font:inherit;font-weight:600;padding:10px 18px;border:0;border-radius:10px;background:var(--accent);color:var(--card);cursor:pointer;text-decoration:none}
+.go .ghost{background:var(--card);color:var(--accent);border:1px solid var(--line)}
 .end{text-align:center}
 .end .score{font-size:40px;font-weight:700;margin:4px 0 0}
 .end p{margin:4px 0;color:var(--ink-2)}
@@ -105,6 +105,7 @@ footer{font-size:12px;color:var(--ink-2);line-height:1.5;margin:18px 2px 8px}
     <button type="button" id="share">Copy result</button>
     <button type="button" id="practice" class="ghost">Practice ten more</button>
     <button type="button" id="daily" class="ghost" hidden>Back to today's</button>
+    <a id="before" class="ghost" hidden></a>
   </div>
   <p id="past" hidden>An earlier day. <a href="./">Play the latest ten</a>.</p>
   <p id="copied" aria-live="polite"></p>

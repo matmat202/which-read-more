@@ -29,6 +29,9 @@ eq('a day from the URL', [L.pickDay('2026-10-26', NOW), L.pickDay('2015-07-01', 
   L.pickDay('2026-02-30', NOW), L.pickDay('2026-1-5', NOW), L.pickDay(null, NOW), L.pickDay('2026-10-26x', NOW)],
   ['2026-10-26', '2015-07-01', null, null, null, null, null, null]);
 eq('long day', L.longDay('2026-10-26'), 'Monday, October 26');
+eq('the day before: across a month, a year and a leap day; none before the first day', [L.dayBefore('2026-10-26'), L.dayBefore('2026-11-01'),
+  L.dayBefore('2026-01-01'), L.dayBefore('2024-03-01'), L.dayBefore('2015-07-02'), L.dayBefore('2015-07-01')],
+  ['2026-10-25', '2026-10-31', '2025-12-31', '2024-02-29', '2015-07-01', null]);
 eq('top url', L.topURL('all-access', '2026-10-26'), 'https://wikimedia.org/api/rest_v1/metrics/pageviews/top/en.wikipedia/all-access/2026/10/26');
 const du = new URL(L.descriptionURL(['Al_Pacino', 'A&B']));
 eq('description url asks for CORS, descriptions and disambiguation', [du.origin, du.searchParams.get('origin'), du.searchParams.get('prop'), du.searchParams.get('titles')],

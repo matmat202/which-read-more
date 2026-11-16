@@ -162,6 +162,11 @@ function drawEnd() {
   $('streak').textContent = game.practice || PAST ? `${game.practice ? 'Practice rounds' : 'Earlier days'} do not count toward your streak.`
     : `${s === 1 ? 'First day of a streak' : `${s}-day streak`}. A new ten when the next day's numbers are out.`;
   $('share').hidden = game.practice;
+  // The way to more real days. ?day= already worked, but only the footer said so; a finished
+  // player now steps back one day at a time, and earlier days stay out of the streak.
+  const prev = L.dayBefore(DAY);
+  $('before').hidden = !prev;
+  if (prev) { $('before').href = `?day=${prev}`; $('before').textContent = `Play ${L.longDay(prev).split(',')[0]}'s ten`; }
   $('share').textContent = sheet() ? 'Share result' : 'Copy result';
   $('copied').textContent = '';
   $('recap').replaceChildren(...game.rounds.map((_, k) => {

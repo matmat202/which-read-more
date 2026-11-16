@@ -172,6 +172,12 @@ export function pickDay(param, ms) {
   return param >= FIRST_DAY && param <= utcDay(ms) ? param : null;
 }
 
+// The day before a day, for the end screen's way back; null before the API's first day.
+export function dayBefore(ymd) {
+  const d = new Date(Date.parse(ymd + 'T00:00:00Z') - 86400000).toISOString().slice(0, 10);
+  return d >= FIRST_DAY ? d : null;
+}
+
 export function longDay(ymd) {
   const d = new Date(ymd + 'T12:00:00Z');
   return d.toLocaleDateString('en-US', { weekday: 'long', day: 'numeric', month: 'long', timeZone: 'UTC' });
