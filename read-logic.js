@@ -188,6 +188,22 @@ export function shareText(day, marks) {
   return `Which Read More? ${day}: ${score}/${marks.length}\n${marks.map((m) => (m ? '🟩' : '🟥')).join('')}`;
 }
 
+// Your record over every finished day (practice never counts): days played, mean right
+// out of ten, best. `scores` is { 'YYYY-MM-DD': right }; anything not 0..10 is ignored, so
+// a corrupted store shows fewer days, never a wrong average.
+export function record(scores) {
+  const v = Object.entries(scores || {}).filter(([d, n]) => /^\d{4}-\d{2}-\d{2}$/.test(d) && Number.isInteger(n) && n >= 0 && n <= 10).map(([, n]) => n);
+  if (!v.length) return null;
+  return { played: v.length, mean: v.reduce((a, b) => a + b, 0) / v.length, best: Math.max(...v) };
+}
+
+export function recordText(r) {
+  if (!r) return '';
+  if (r.played === 1) return 'Your first day on record.';
+  const mean = (Math.round(r.mean * 10) / 10).toString();
+  return `${r.played} days played · ${mean} right on average · best ${r.best} / 10`;
+}
+
 // Consecutive data days played, ending at `today` or the day before.
 export function streak(days, today) {
   const have = new Set(days);

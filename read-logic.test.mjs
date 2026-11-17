@@ -180,5 +180,12 @@ if (existsSync(fix + 'all.json') && existsSync(factFile)) {
   eq('real: it took two bans, of the two undescribed picks', [tries, [...ban]], [2, ['2026_Israeli_legislative_election', 'List_of_presidents_of_the_United_States']]);
 } else ok('real: data/2026-10-26/ and test/facts.json exist (run capture.py, test/facts.py)', false);
 
+// The record across days. Five days (three-element order traps a two-element bug).
+eq('record', L.record({ '2026-10-24': 6, '2026-10-26': 9, '2026-10-25': 4, '2026-10-27': 7, '2026-10-28': 7 }), { played: 5, mean: 6.6, best: 9 });
+eq('record: nothing yet', L.record({}), null);
+eq('record: junk ignored, zero kept', L.record({ '2026-10-24': 0, '2026-10-25': 11, x: 5, '2026-10-26': 'a', '2026-10-27': 3 }), { played: 2, mean: 1.5, best: 3 });
+eq('record text', [L.recordText(null), L.recordText({ played: 1, mean: 6, best: 6 }), L.recordText({ played: 3, mean: 20 / 3, best: 9 }), L.recordText({ played: 2, mean: 7, best: 8 })],
+  ['', 'Your first day on record.', '3 days played · 6.7 right on average · best 9 / 10', '2 days played · 7 right on average · best 8 / 10']);
+
 console.log(`${fail ? 'FAILED' : 'ok'}: ${pass} passed, ${fail} failed`);
 process.exit(fail ? 1 : 0);

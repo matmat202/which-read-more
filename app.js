@@ -156,8 +156,15 @@ function drawBars(a, b) {
 
 function drawEnd() {
   const m = marks(), score = m.filter(Boolean).length;
-  $('endday').textContent = game.practice ? 'Practice ten' : `Today's ten · read on ${L.longDay(DAY)}`;
+  // `?day=` games said "Today's ten" too, on a day that was not today's.
+  $('endday').textContent = game.practice ? 'Practice ten' : `${PAST ? 'An earlier' : "Today's"} ten · read on ${L.longDay(DAY)}`;
   $('score').textContent = `${score} / ${m.length}`;
+  // Every finished day goes on the record, earlier days included: the streak is about
+  // coming back, the record about how good you are. Written here rather than in save() so
+  // a day finished before the record existed is counted the next time its end is shown.
+  const scores = store.get('wrm:scores', {});
+  if (!game.practice && m.length === game.rounds.length) { scores[DAY] = score; store.set('wrm:scores', scores); }
+  $('record').textContent = game.practice ? '' : L.recordText(L.record(scores));
   const s = L.streak(store.get('wrm:days', []), DAY);
   $('streak').textContent = game.practice || PAST ? `${game.practice ? 'Practice rounds' : 'Earlier days'} do not count toward your streak.`
     : `${s === 1 ? 'First day of a streak' : `${s}-day streak`}. A new ten when the next day's numbers are out.`;
