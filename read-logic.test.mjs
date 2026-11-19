@@ -184,6 +184,13 @@ if (existsSync(fix + 'all.json') && existsSync(factFile)) {
 eq('record', L.record({ '2026-10-24': 6, '2026-10-26': 9, '2026-10-25': 4, '2026-10-27': 7, '2026-10-28': 7 }), { played: 5, mean: 6.6, best: 9 });
 eq('record: nothing yet', L.record({}), null);
 eq('record: junk ignored, zero kept', L.record({ '2026-10-24': 0, '2026-10-25': 11, x: 5, '2026-10-26': 'a', '2026-10-27': 3 }), { played: 2, mean: 1.5, best: 3 });
+// Mutation audit 2026-11-18: `n <= 10 -> n < 10` survived. The fixtures above test 0 and
+// 11 -- one PAST the upper boundary, never the boundary -- so nothing noticed that the
+// mutant drops every perfect day from the record: played, mean and best all wrong, and
+// `best` could never read 10. Its `same` label meant only that the equiv sweep never
+// reaches record() (bin/mutwatch blind which-read-more).
+eq('record: a perfect 10 is kept, not filtered out',
+   L.record({ '2026-10-24': 10, '2026-10-25': 8 }), { played: 2, mean: 9, best: 10 });
 eq('record text', [L.recordText(null), L.recordText({ played: 1, mean: 6, best: 6 }), L.recordText({ played: 3, mean: 20 / 3, best: 9 }), L.recordText({ played: 2, mean: 7, best: 8 })],
   ['', 'Your first day on record.', '3 days played · 6.7 right on average · best 9 / 10', '2 days played · 7 right on average · best 8 / 10']);
 
