@@ -28,14 +28,25 @@ async function loadLists() {
 
 // Choose the ten, look up what has not been looked up, ban what may not be shown, choose
 // again. The choice depends only on the lists and the bans, so everyone gets the same ten.
+// Every candidate is described up front, in one parallel wave. Asking only for the drawn
+// twenty cost a round trip per redraw: a ban reshuffles every later round, so a typical
+// first ten waited on five requests in series (2026-11-21, live). ~20 requests of 50
+// titles, ~50 KB gzipped, and a practice ten then needs no request at all.
+async function describe(titles) {
+  const ask = [...new Set(titles)].filter((t) => !(t in INFO));
+  const batches = [];
+  for (let k = 0; k < ask.length; k += 50) batches.push(ask.slice(k, k + 50));
+  for (const json of await Promise.all(batches.map((b) => getJSON(L.descriptionURL(b))))) Object.assign(INFO, L.readDescriptions(json));
+  for (const t of ask) if (!(t in INFO)) INFO[t] = { d: '', dab: false, missing: true };
+}
+
 async function choose(seed) {
   const ban = new Set();
+  await describe(CANDS.map((c) => c.t));
   for (let tries = 0; tries < 8; tries++) {
     const rounds = L.roundsFor(CANDS, seed, ban);
     const titles = L.titlesOf(CANDS, rounds);
-    const ask = titles.filter((t) => !(t in INFO));
-    for (let k = 0; k < ask.length; k += 50) Object.assign(INFO, L.readDescriptions(await getJSON(L.descriptionURL(ask.slice(k, k + 50)))));
-    for (const t of ask) if (!(t in INFO)) INFO[t] = { d: '', dab: false, missing: true };
+    await describe(titles); // a no-op once the wave is in; kept so a draw never shows an unlooked-up title
     const bad = titles.filter((t) => !L.allowed(t, INFO[t]));
     if (!bad.length) return rounds;
     bad.forEach((t) => ban.add(t));
