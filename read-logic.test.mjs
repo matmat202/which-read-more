@@ -32,6 +32,10 @@ eq('long day', L.longDay('2026-10-26'), 'Monday, October 26');
 eq('the day before: across a month, a year and a leap day; none before the first day', [L.dayBefore('2026-10-26'), L.dayBefore('2026-11-01'),
   L.dayBefore('2026-01-01'), L.dayBefore('2024-03-01'), L.dayBefore('2015-07-02'), L.dayBefore('2015-07-01')],
   ['2026-10-25', '2026-10-31', '2025-12-31', '2024-02-29', '2015-07-01', null]);
+// NOW's yesterday is 2026-10-26 (pickDay above): the way forward stops the day before it.
+eq('the day after: across a month, a year and a leap day; none at or past yesterday', [L.dayAfter('2026-10-31', Date.parse('2026-11-05T12:00:00Z')),
+  L.dayAfter('2025-12-31', NOW), L.dayAfter('2024-02-28', NOW), L.dayAfter('2026-10-24', NOW), L.dayAfter('2026-10-25', NOW), L.dayAfter('2026-10-26', NOW)],
+  ['2026-11-01', '2026-01-01', '2024-02-29', '2026-10-25', null, null]);
 eq('top url', L.topURL('all-access', '2026-10-26'), 'https://wikimedia.org/api/rest_v1/metrics/pageviews/top/en.wikipedia/all-access/2026/10/26');
 const du = new URL(L.descriptionURL(['Al_Pacino', 'A&B']));
 eq('description url asks for CORS, descriptions and disambiguation', [du.origin, du.searchParams.get('origin'), du.searchParams.get('prop'), du.searchParams.get('titles')],

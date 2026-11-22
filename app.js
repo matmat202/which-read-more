@@ -184,7 +184,11 @@ function drawEnd() {
   // player now steps back one day at a time, and earlier days stay out of the streak.
   const prev = L.dayBefore(DAY);
   $('before').hidden = !prev;
-  if (prev) { $('before').href = `?day=${prev}`; $('before').textContent = `Play ${L.longDay(prev).split(',')[0]}'s ten`; }
+  if (prev) { $('before').href = `?day=${prev}`; $('before').textContent = `← Play ${L.longDay(prev).split(',')[0]}'s ten`; }
+  // And forward again: a player who stepped back three days had only "the latest ten".
+  const nxt = PAST ? L.dayAfter(DAY, Date.now()) : null;
+  $('after').hidden = !nxt;
+  if (nxt) { $('after').href = `?day=${nxt}`; $('after').textContent = `Play ${L.longDay(nxt).split(',')[0]}'s ten →`; }
   $('share').textContent = sheet() ? 'Share result' : 'Copy result';
   $('copied').textContent = '';
   $('recap').replaceChildren(...game.rounds.map((_, k) => {

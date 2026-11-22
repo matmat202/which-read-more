@@ -178,6 +178,14 @@ export function dayBefore(ymd) {
   return d >= FIRST_DAY ? d : null;
 }
 
+// The day after an earlier day, for the end screen's way forward. Only a day before
+// yesterday: yesterday's lists may not be out yet, and an asked-for day does not fall back,
+// so that last step is the "latest ten" link, which does.
+export function dayAfter(ymd, ms) {
+  const d = new Date(Date.parse(ymd + 'T00:00:00Z') + 86400000).toISOString().slice(0, 10);
+  return d < utcDay(ms) ? d : null;
+}
+
 export function longDay(ymd) {
   const d = new Date(ymd + 'T12:00:00Z');
   return d.toLocaleDateString('en-US', { weekday: 'long', day: 'numeric', month: 'long', timeZone: 'UTC' });
