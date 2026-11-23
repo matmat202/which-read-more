@@ -172,6 +172,18 @@ export function pickDay(param, ms) {
   return param >= FIRST_DAY && param <= utcDay(ms) ? param : null;
 }
 
+// Whether a day from the URL is an EARLIER day: older than the ten the bare page plays,
+// which is yesterday, or the day before while yesterday's lists are not out. A shared link
+// names its day, so a friend who opens it the same day is playing today's ten, and it
+// must count toward their streak like the bare page would.
+export function isPast(day, ms, yesterdayOut) {
+  return day < utcDay(ms, yesterdayOut ? 1 : 2);
+}
+
+// The link a result is shared with. It names the day, so whoever opens it plays the same
+// ten; the bare address had moved on to the next day's ten by the time a friend looked.
+export const shareURL = (day) => `https://matmat202.github.io/which-read-more/?day=${day}`;
+
 // The day before a day, for the end screen's way back; null before the API's first day.
 export function dayBefore(ymd) {
   const d = new Date(Date.parse(ymd + 'T00:00:00Z') - 86400000).toISOString().slice(0, 10);

@@ -36,6 +36,11 @@ eq('the day before: across a month, a year and a leap day; none before the first
 eq('the day after: across a month, a year and a leap day; none at or past yesterday', [L.dayAfter('2026-10-31', Date.parse('2026-11-05T12:00:00Z')),
   L.dayAfter('2025-12-31', NOW), L.dayAfter('2024-02-28', NOW), L.dayAfter('2026-10-24', NOW), L.dayAfter('2026-10-25', NOW), L.dayAfter('2026-10-26', NOW)],
   ['2026-11-01', '2026-01-01', '2024-02-29', '2026-10-25', null, null]);
+// NOW's yesterday is 2026-10-26. A day is earlier only if older than the ten the bare
+// page plays: yesterday, or the day before while yesterday is not out.
+eq('an earlier day, yesterday out', [L.isPast('2026-10-26', NOW, true), L.isPast('2026-10-25', NOW, true), L.isPast('2026-10-24', NOW, true)], [false, true, true]);
+eq('an earlier day, yesterday not out', [L.isPast('2026-10-26', NOW, false), L.isPast('2026-10-25', NOW, false), L.isPast('2026-10-24', NOW, false)], [false, false, true]);
+eq('the shared link names its day', L.shareURL('2026-10-26'), 'https://matmat202.github.io/which-read-more/?day=2026-10-26');
 eq('top url', L.topURL('all-access', '2026-10-26'), 'https://wikimedia.org/api/rest_v1/metrics/pageviews/top/en.wikipedia/all-access/2026/10/26');
 const du = new URL(L.descriptionURL(['Al_Pacino', 'A&B']));
 eq('description url asks for CORS, descriptions and disambiguation', [du.origin, du.searchParams.get('origin'), du.searchParams.get('prop'), du.searchParams.get('titles')],

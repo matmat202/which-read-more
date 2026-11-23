@@ -12,15 +12,20 @@ let game = null; // { key, practice, rounds, picks, showing }
 
 const getJSON = (url) => fetch(url).then((r) => { if (!r.ok) { const e = new Error(`HTTP ${r.status}`); e.status = r.status; throw e; } return r.json(); });
 
-// Yesterday in UTC, or the day before while yesterday's lists are not out yet.
+// Yesterday in UTC, or the day before while yesterday's lists are not out yet. A day
+// asked for in the URL is an earlier day only if it is older than that; when it is the
+// day before yesterday, whether yesterday is out decides, so it is asked alongside.
 async function loadLists() {
-  const asked = L.pickDay(new URLSearchParams(location.search).get('day'), Date.now());
+  const now = Date.now();
+  const asked = L.pickDay(new URLSearchParams(location.search).get('day'), now);
+  const probe = asked === L.utcDay(now, 2)
+    ? getJSON(L.topURL('all-access', L.utcDay(now, 1))).then(() => true, (e) => e.status !== 404) : null;
   let last;
   for (const back of asked ? [0] : [1, 2, 3]) {
-    const day = asked || L.utcDay(Date.now(), back);
+    const day = asked || L.utcDay(now, back);
     try {
-      const [all, desk] = await Promise.all([getJSON(L.topURL('all-access', day)), getJSON(L.topURL('desktop', day))]);
-      return { day, all, desk };
+      const [all, desk, out] = await Promise.all([getJSON(L.topURL('all-access', day)), getJSON(L.topURL('desktop', day)), probe ?? true]);
+      return { day, all, desk, past: !!asked && L.isPast(day, now, out) };
     } catch (e) { last = e; if (e.status !== 404) break; }
   }
   throw last;
@@ -212,7 +217,7 @@ function drawEnd() {
 // dialog for it, so a mouse keeps the clipboard. Cancelling the sheet is not a failure.
 const sheet = () => typeof navigator.share === 'function' && matchMedia('(pointer: coarse)').matches;
 async function share() {
-  const text = L.shareText(DAY, marks()) + '\nhttps://matmat202.github.io/which-read-more/';
+  const text = L.shareText(DAY, marks()) + '\n' + L.shareURL(DAY);
   $('copied').textContent = '';
   if (sheet()) {
     try { await navigator.share({ text }); return; }
@@ -241,10 +246,10 @@ document.addEventListener('keydown', (e) => {
   }
 });
 
-loadLists().then(({ day, all, desk }) => {
+loadLists().then(({ day, all, desk, past }) => {
   DAY = day; CANDS = L.candidates(all, desk);
   $('day').textContent = L.longDay(DAY);
-  PAST = !!L.pickDay(new URLSearchParams(location.search).get('day'), Date.now());
+  PAST = past;
   $('past').hidden = !PAST;
   return start(false);
 }).catch(fail);
