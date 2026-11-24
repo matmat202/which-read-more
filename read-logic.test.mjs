@@ -122,6 +122,16 @@ eq('fits: both band ends are inside', [L.fits({ v: 20 }, { v: 10 }, [2, 3]), L.f
   [true, true, false, false]);
 eq('a tie: the first named is "higher", so the verdict keeps the order given', [L.higherIndex(5, 5), L.verdict('A', 5, 'B', 5)], [0, 'A: 5 views. B: 5 views. 1% more.']);
 eq('times: 1.95 is the first "times as many", and one view is not zero', [L.times(19.5, 10), L.times(19.49, 10), L.times(5, 1)], ['2.0 times as many', '95% more', '5.0 times as many']);
+// The OTHER boundary in times(): at 10x the ratio drops its decimal. Both halves of
+// `x >= 10 ? 0 : 1` were unpinned until 2026-11-24, because every earlier case sits well
+// clear of 10 (14x, 2x, 5x) and the mutants only move inside [10, 11): `>= 10` -> `> 10`
+// shows at exactly 10, and `10` -> `11` shows for the rest of that span. Note 9.99 and
+// 10.00 both read "ten" and are formatted differently; that is the boundary, pinned, not
+// a typo in the expectations.
+eq('times: the decimal is dropped from exactly 10x, and 9.99x still carries it',
+  [L.times(1000, 100), L.times(999, 100)], ['10 times as many', '10.0 times as many']);
+eq('times: just past 10x it rounds whole, so 10.5x reads 11, not 10.5',
+  [L.times(1050, 100), L.times(1099, 100)], ['11 times as many', '11 times as many']);
 eq('utcDay at exactly midnight UTC', L.utcDay(Date.parse('2026-10-27T00:00:00Z')), '2026-10-26');
 eq('candidates: one view counts, zero does not', L.candidates(list([['One', 1], ['Zero', 0]]), null).map((c) => c.t), ['One']);
 eq('candidates: exactly 90% desktop and exactly 5% are kept', L.candidates(list([['Ninety', 10], ['Five', 20]]), list([['Ninety', 9], ['Five', 1]])).map((c) => c.desk), [0.05, 0.9]);
